@@ -1,51 +1,193 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Robot Workspace AR</title>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Robot Workspace AR Tool</title>
 
-<style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body{
-margin:0;
-overflow:hidden;
-}
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #000;
+    }
 
-#camera{
-position:absolute;
-width:100%;
-height:100%;
-object-fit:cover;
-z-index:-1;
-}
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
 
-#ui{
-position:absolute;
-top:10px;
-left:10px;
-background:rgba(0,0,0,0.5);
-color:white;
-padding:10px;
-border-radius:8px;
-}
+    #camera {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+      z-index: 0;
+    }
 
-</style>
+    canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: block;
+      touch-action: none;
+    }
 
+    #panel {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 2;
+      max-width: 380px;
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.58);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    #title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    #hint {
+      font-size: 14px;
+      line-height: 1.45;
+      opacity: 0.95;
+      margin-bottom: 12px;
+    }
+
+    .row {
+      margin-bottom: 10px;
+    }
+
+    .label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 6px;
+      opacity: 0.95;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    #status {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.4;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    #buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #111;
+    }
+
+    button.secondary {
+      background: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+
+    #legend {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+  </style>
 </head>
-
 <body>
+  <div id="app">
+    <video id="camera" autoplay playsinline muted></video>
 
-<video id="camera" autoplay playsinline></video>
+    <div id="panel">
+      <div id="title">Robot Workspace AR Tool</div>
+      <div id="hint">
+        First tap: place robot base.<br />
+        Next taps: place target points and check reachability.
+      </div>
 
-<div id="ui">
-Workspace radius:
-<input id="radius" type="range" min="0.2" max="2" step="0.1" value="0.8">
-</div>
+      <div class="row">
+        <div class="label">
+          <span>Workspace radius</span>
+          <span id="radiusValue">0.80 m</span>
+        </div>
+        <input
+          id="radiusSlider"
+          type="range"
+          min="0.2"
+          max="2.0"
+          step="0.05"
+          value="0.8"
+        />
+      </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="app.js"></script>
+      <div id="status">Initializing camera...</div>
 
+      <div id="buttons">
+        <button id="resetBtn" class="secondary">Reset</button>
+      </div>
+    </div>
+
+    <div id="legend">
+      <div><span class="dot" style="background:#ff4d4f;"></span>Robot base</div>
+      <div><span class="dot" style="background:#40a9ff;"></span>Target</div>
+      <div><span class="dot" style="background:#52c41a;"></span>Reachable</div>
+      <div><span class="dot" style="background:#faad14;"></span>Workspace</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="app.js"></script>
 </body>
-
 </html>
