@@ -1,107 +1,107 @@
 import json
-import math
-import os
-from pathlib import Path
-
 import numpy as np
+from pathlib import Path
 from ikpy.chain import Chain
 
 
-# ========= 用户需要改的部分 =========
+# ========= 用户参数 =========
 URDF_PATH = Path("../robot/robot.urdf")
 OUTPUT_PATH = Path("../workspace_points.json")
 
-# 只保留你真正要采样的活动关节，顺序必须和 IKPy chain 中对应
-# 你可以先 print([link.name for link in chain.links]) 看一下名字
-ACTIVE_JOINTS = [
-    "shoulder_pan_joint",
-    "shoulder_lift_joint",
-    "elbow_joint",
-    "wrist_1_joint",
-    "wrist_2_joint",
-    "wrist_3_joint",
-]
-
-# 单位：弧度
-JOINT_LIMITS = {
-    "shoulder_pan_joint": [-math.pi, math.pi],
-    "shoulder_lift_joint": [-1.57, 1.57],
-    "elbow_joint": [-2.2, 2.2],
-    "wrist_1_joint": [-math.pi, math.pi],
-    "wrist_2_joint": [-2.0, 2.0],
-    "wrist_3_joint": [-math.pi, math.pi],
-}
-
-# 采样数量
-NUM_SAMPLES = 30000
-
-# 是否仅保留位置，不考虑姿态
-# 当前脚本只输出末端位置点云
-# ==================================
+NUM_SAMPLES = 80000
+# ============================
 
 
-def build_active_links_mask(chain, active_joint_names):
+def get_active_mask(chain):
     """
-    IKPy 的 Chain.from_urdf_file 返回的 links 里包含 fixed/base 等。
-    active_links_mask 需要与 chain.links 等长。
+    自动识别可动关节
     """
     mask = []
     for link in chain.links:
-        name = getattr(link, "name", "")
-        mask.append(name in active_joint_names)
+        if link.joint_type in ["revolute", "prismatic"]:
+            mask.append(True)
+        else:
+            mask.append(False)
     return mask
 
 
-def sample_joint_vector(chain, active_joint_names, joint_limits):
+def sample_joint_vector(chain):
     """
-    IKPy 的 forward_kinematics 输入长度必须等于 len(chain.links)。
-    对非活动关节填 0，对活动关节按范围采样。
+    按 joint limits 随机采样
     """
-    q = np.zeros(len(chain.links), dtype=float)
+    q = np.zeros(len(chain.links))
+
     for i, link in enumerate(chain.links):
-        name = getattr(link, "name", "")
-        if name in active_joint_names:
-            low, high = joint_limits[name]
-            q[i] = np.random.uniform(low, high)
-        else:
-            q[i] = 0.0
+
+        if link.joint_type in ["revolute", "prismatic"]:
+
+            lower, upper = link.bounds
+
+            if lower is None:
+                lower = -np.pi
+
+            if upper is None:
+                upper = np.pi
+
+            q[i] = np.random.uniform(lower, upper)
+
     return q
 
 
+def print_robot_info(chain):
+
+    print("\nDetected robot links:\n")
+
+    for i, link in enumerate(chain.links):
+
+        print(
+            f"[{i}] {link.name:25s} "
+            f"type={link.joint_type:10s} "
+            f"limits={link.bounds}"
+        )
+
+
 def main():
+
     if not URDF_PATH.exists():
-        raise FileNotFoundError(f"URDF not found: {URDF_PATH.resolve()}")
+        raise FileNotFoundError(URDF_PATH)
 
-    print(f"Loading URDF: {URDF_PATH.resolve()}")
+    print("Loading URDF:", URDF_PATH.resolve())
 
-    # 先构建临时 chain 看 link 名字
-    tmp_chain = Chain.from_urdf_file(str(URDF_PATH))
-    print("Detected links/joints in chain:")
-    for i, link in enumerate(tmp_chain.links):
-        print(f"  [{i}] {getattr(link, 'name', 'unknown')}")
+    chain = Chain.from_urdf_file(str(URDF_PATH))
 
-    active_links_mask = build_active_links_mask(tmp_chain, ACTIVE_JOINTS)
+    print_robot_info(chain)
+
+    active_mask = get_active_mask(chain)
+
+    print("\nActive joints:")
+
+    for i, (link, flag) in enumerate(zip(chain.links, active_mask)):
+        print(f"[{i}] {link.name:25s} {'ACTIVE' if flag else 'fixed'}")
 
     chain = Chain.from_urdf_file(
         str(URDF_PATH),
-        active_links_mask=active_links_mask
+        active_links_mask=active_mask
     )
 
-    print("\nUsing active links mask:")
-    for i, (link, flag) in enumerate(zip(chain.links, active_links_mask)):
-        print(f"  [{i}] {getattr(link, 'name', 'unknown')}: {'active' if flag else 'fixed'}")
-
     points = []
+
+    print("\nSampling workspace...")
+
     for i in range(NUM_SAMPLES):
-        q = sample_joint_vector(chain, ACTIVE_JOINTS, JOINT_LIMITS)
+
+        q = sample_joint_vector(chain)
+
         T = chain.forward_kinematics(q)
+
         pos = T[:3, 3]
+
         points.append(pos.tolist())
 
         if (i + 1) % 5000 == 0:
-            print(f"Generated {i + 1}/{NUM_SAMPLES} samples")
+            print(f"{i+1}/{NUM_SAMPLES}")
 
-    points = np.asarray(points, dtype=float)
+    points = np.array(points)
 
     mins = points.min(axis=0).tolist()
     maxs = points.max(axis=0).tolist()
@@ -109,9 +109,7 @@ def main():
     data = {
         "metadata": {
             "urdf": str(URDF_PATH),
-            "num_samples": int(NUM_SAMPLES),
-            "active_joints": ACTIVE_JOINTS,
-            "joint_limits": JOINT_LIMITS,
+            "num_samples": NUM_SAMPLES,
             "bounds_min": mins,
             "bounds_max": maxs,
             "unit": "meter"
@@ -119,13 +117,16 @@ def main():
         "points": points.tolist()
     }
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    OUTPUT_PATH.parent.mkdir(exist_ok=True)
+
+    with open(OUTPUT_PATH, "w") as f:
         json.dump(data, f)
 
-    print(f"\nSaved workspace points to: {OUTPUT_PATH.resolve()}")
-    print(f"Bounds min: {mins}")
-    print(f"Bounds max: {maxs}")
+    print("\nWorkspace saved to:", OUTPUT_PATH.resolve())
+
+    print("\nWorkspace bounds:")
+    print("min:", mins)
+    print("max:", maxs)
 
 
 if __name__ == "__main__":
