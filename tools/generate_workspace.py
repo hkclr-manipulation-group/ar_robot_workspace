@@ -14,22 +14,22 @@ OUTPUT_PATH = Path("../workspace_points.json")
 # 只保留你真正要采样的活动关节，顺序必须和 IKPy chain 中对应
 # 你可以先 print([link.name for link in chain.links]) 看一下名字
 ACTIVE_JOINTS = [
-    "joint1",
-    "joint2",
-    "joint3",
-    "joint4",
-    "joint5",
-    "joint6",
+    "shoulder_pan_joint",
+    "shoulder_lift_joint",
+    "elbow_joint",
+    "wrist_1_joint",
+    "wrist_2_joint",
+    "wrist_3_joint",
 ]
 
 # 单位：弧度
 JOINT_LIMITS = {
-    "joint1": [-math.pi, math.pi],
-    "joint2": [-1.57, 1.57],
-    "joint3": [-2.2, 2.2],
-    "joint4": [-math.pi, math.pi],
-    "joint5": [-2.0, 2.0],
-    "joint6": [-math.pi, math.pi],
+    "shoulder_pan_joint": [-math.pi, math.pi],
+    "shoulder_lift_joint": [-1.57, 1.57],
+    "elbow_joint": [-2.2, 2.2],
+    "wrist_1_joint": [-math.pi, math.pi],
+    "wrist_2_joint": [-2.0, 2.0],
+    "wrist_3_joint": [-math.pi, math.pi],
 }
 
 # 采样数量
