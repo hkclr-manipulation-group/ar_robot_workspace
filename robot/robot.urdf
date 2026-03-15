@@ -119,18 +119,12 @@
     <visual>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/base.dae"/>
+        <mesh filename="meshes/visual/base.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/base.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="4.0"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -141,18 +135,12 @@
     <visual>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/shoulder.dae"/>
+        <mesh filename="meshes/visual/shoulder.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/shoulder.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="3.7"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -163,18 +151,12 @@
     <visual>
       <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.13585"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/upperarm.dae"/>
+        <mesh filename="meshes/visual/upperarm.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.13585"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/upperarm.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="8.393"/>
       <origin rpy="0 1.5707963267948966 0" xyz="-0.2125 0.0 0.136"/>
@@ -185,18 +167,12 @@
     <visual>
       <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.0165"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/forearm.dae"/>
+        <mesh filename="meshes/visual/forearm.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.0165"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/forearm.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="2.275"/>
       <origin rpy="0 1.5707963267948966 0" xyz="-0.196125 0.0 0.0165"/>
@@ -208,18 +184,12 @@
       <!-- TODO: Move this to a parameter -->
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.093"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/wrist1.dae"/>
+        <mesh filename="meshes/visual/wrist1.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.093"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/wrist1.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="1.219"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -230,18 +200,12 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 -0.095"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/wrist2.dae"/>
+        <mesh filename="meshes/visual/wrist2.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.095"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/wrist2.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="1.219"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -252,18 +216,12 @@
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.0818"/>
       <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/visual/wrist3.dae"/>
+        <mesh filename="meshes/visual/wrist3.dae"/>
       </geometry>
       <material name="LightGrey">
         <color rgba="0.7 0.7 0.7 1.0"/>
       </material>
     </visual>
-    <collision>
-      <origin rpy="1.5707963267948966 0 0" xyz="0 0 -0.0818"/>
-      <geometry>
-        <mesh filename="package://ur_description/meshes/ur5/collision/wrist3.stl"/>
-      </geometry>
-    </collision>
     <inertial>
       <mass value="0.1879"/>
       <origin rpy="0 0 0" xyz="0.0 0.0 -0.01525"/>
